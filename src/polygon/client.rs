@@ -1,25 +1,63 @@
+//! Polygon.io HTTP client with authentication, rate limiting, and caching.
+//!
+//! The client handles API key authentication, automatic retries with exponential
+//! backoff, proactive rate limiting, and optional response caching.
+//!
+//! # Example
+//!
+//! ```no_run
+//! use polygon_mcp::PolygonClient;
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let client = PolygonClient::from_env()?;
+//!
+//! // Make API requests
+//! let response: serde_json::Value = client.get("/v2/aggs/ticker/AAPL/prev").await?;
+//! # Ok(())
+//! # }
+//! ```
+
 use std::env;
 use std::time::Duration;
 
 use reqwest::{Client, Response, StatusCode};
 use serde::de::DeserializeOwned;
-use tracing::{debug, warn};
+use tracing::{debug, trace, warn};
 use url::Url;
 
+use super::cache::{CacheConfig, ResponseCache};
 use super::error::PolygonError;
 use super::pagination::Paginator;
+use super::rate_limit::{RateLimitConfig, RateLimiter};
+use super::retry::RetryConfig;
 use super::types::ErrorResponse;
 
 const BASE_URL: &str = "https://api.polygon.io";
 const DEFAULT_TIMEOUT: Duration = Duration::from_secs(30);
-const DEFAULT_MAX_RETRIES: u32 = 3;
-const DEFAULT_RETRY_DELAY: Duration = Duration::from_secs(1);
 
+/// Builder for creating a [`PolygonClient`] with custom configuration.
+///
+/// # Example
+///
+/// ```no_run
+/// use std::time::Duration;
+/// use polygon_mcp::{PolygonClient, CacheConfig, RateLimitConfig};
+///
+/// let client = PolygonClient::builder()
+///     .api_key("your-api-key")
+///     .timeout(Duration::from_secs(60))
+///     .cache(CacheConfig::enabled().with_ttl(Duration::from_secs(300)))
+///     .rate_limit(RateLimitConfig::new(10))
+///     .build()
+///     .unwrap();
+/// ```
 pub struct PolygonClientBuilder {
     api_key: Option<String>,
     base_url: String,
     timeout: Duration,
-    max_retries: u32,
+    retry_config: RetryConfig,
+    cache_config: CacheConfig,
+    rate_limit_config: RateLimitConfig,
 }
 
 impl Default for PolygonClientBuilder {
@@ -29,35 +67,66 @@ impl Default for PolygonClientBuilder {
 }
 
 impl PolygonClientBuilder {
+    /// Creates a new builder with default configuration.
     pub fn new() -> Self {
         Self {
             api_key: None,
             base_url: BASE_URL.to_string(),
             timeout: DEFAULT_TIMEOUT,
-            max_retries: DEFAULT_MAX_RETRIES,
+            retry_config: RetryConfig::default(),
+            cache_config: CacheConfig::default(),
+            rate_limit_config: RateLimitConfig::default(),
         }
     }
 
+    /// Sets the API key for authentication.
     pub fn api_key(mut self, key: impl Into<String>) -> Self {
         self.api_key = Some(key.into());
         self
     }
 
+    /// Sets the base URL for the API.
     pub fn base_url(mut self, url: impl Into<String>) -> Self {
         self.base_url = url.into();
         self
     }
 
+    /// Sets the request timeout.
     pub fn timeout(mut self, timeout: Duration) -> Self {
         self.timeout = timeout;
         self
     }
 
+    /// Sets the maximum number of retry attempts.
     pub fn max_retries(mut self, max_retries: u32) -> Self {
-        self.max_retries = max_retries;
+        self.retry_config = self.retry_config.with_max_retries(max_retries);
         self
     }
 
+    /// Sets the retry configuration.
+    pub fn retry(mut self, config: RetryConfig) -> Self {
+        self.retry_config = config;
+        self
+    }
+
+    /// Sets the cache configuration.
+    pub fn cache(mut self, config: CacheConfig) -> Self {
+        self.cache_config = config;
+        self
+    }
+
+    /// Sets the rate limit configuration.
+    pub fn rate_limit(mut self, config: RateLimitConfig) -> Self {
+        self.rate_limit_config = config;
+        self
+    }
+
+    /// Builds the client.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if no API key is provided and `POLYGON_API_KEY`
+    /// environment variable is not set.
     pub fn build(self) -> Result<PolygonClient, PolygonError> {
         let api_key = self
             .api_key
@@ -73,31 +142,75 @@ impl PolygonClientBuilder {
             client,
             api_key,
             base_url: self.base_url,
-            max_retries: self.max_retries,
+            retry_config: self.retry_config,
+            cache: ResponseCache::new(&self.cache_config),
+            rate_limiter: RateLimiter::new(self.rate_limit_config),
         })
     }
 }
 
+/// HTTP client for the Polygon.io API.
+///
+/// Provides authenticated access to the Polygon.io financial data API with
+/// built-in rate limiting, caching, and automatic retries.
+///
+/// # Example
+///
+/// ```no_run
+/// use polygon_mcp::PolygonClient;
+///
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// // Create client from POLYGON_API_KEY environment variable
+/// let client = PolygonClient::from_env()?;
+///
+/// // Or with explicit API key
+/// let client = PolygonClient::with_key("your-api-key")?;
+/// # Ok(())
+/// # }
+/// ```
 pub struct PolygonClient {
     client: Client,
     api_key: String,
     base_url: String,
-    max_retries: u32,
+    retry_config: RetryConfig,
+    cache: ResponseCache,
+    rate_limiter: RateLimiter,
 }
 
 impl PolygonClient {
+    /// Creates a new builder for configuring the client.
     pub fn builder() -> PolygonClientBuilder {
         PolygonClientBuilder::new()
     }
 
+    /// Creates a client using the `POLYGON_API_KEY` environment variable.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the environment variable is not set.
     pub fn from_env() -> Result<Self, PolygonError> {
         Self::builder().build()
     }
 
+    /// Creates a client with the given API key.
     pub fn with_key(api_key: impl Into<String>) -> Result<Self, PolygonError> {
         Self::builder().api_key(api_key).build()
     }
 
+    /// Makes a GET request to the given API path.
+    ///
+    /// The path should start with `/` and will be appended to the base URL.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// # use polygon_mcp::PolygonClient;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let client = PolygonClient::from_env()?;
+    /// let response: serde_json::Value = client.get("/v2/aggs/ticker/AAPL/prev").await?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub async fn get<T>(&self, path: &str) -> Result<T, PolygonError>
     where
         T: DeserializeOwned,
@@ -106,6 +219,9 @@ impl PolygonClient {
         self.get_raw(&url).await
     }
 
+    /// Makes a GET request to the given full URL.
+    ///
+    /// Use this for pagination when following `next_url` links.
     pub async fn get_raw<T>(&self, url: &str) -> Result<T, PolygonError>
     where
         T: DeserializeOwned,
@@ -114,12 +230,38 @@ impl PolygonClient {
         self.execute_with_retry(&url).await
     }
 
+    /// Creates a paginator for iterating over paged results.
+    ///
+    /// # Example
+    ///
+    /// ```no_run
+    /// # use polygon_mcp::PolygonClient;
+    /// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+    /// # let client = PolygonClient::from_env()?;
+    /// let mut paginator = client.paginate::<serde_json::Value>("/v3/reference/tickers")?;
+    ///
+    /// while let Some(page) = paginator.next_page().await? {
+    ///     // Process page
+    /// }
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn paginate<T>(&self, path: &str) -> Result<Paginator<'_, T>, PolygonError>
     where
         T: DeserializeOwned + Send,
     {
         let url = self.build_url(path)?;
         Ok(Paginator::new(self, url))
+    }
+
+    /// Returns the response cache.
+    pub fn cache(&self) -> &ResponseCache {
+        &self.cache
+    }
+
+    /// Returns the rate limiter.
+    pub fn rate_limiter(&self) -> &RateLimiter {
+        &self.rate_limiter
     }
 
     fn build_url(&self, path: &str) -> Result<String, PolygonError> {
@@ -140,22 +282,43 @@ impl PolygonClient {
     where
         T: DeserializeOwned,
     {
+        let cache_key = url.to_string();
+
+        if let Some(cached) = self.cache.get(&cache_key).await {
+            trace!(url = %url, "cache hit");
+            return serde_json::from_str(&cached).map_err(PolygonError::from);
+        }
+
         let mut attempts = 0;
         let mut last_error: Option<PolygonError> = None;
+        let mut retry_after_hint: Option<Duration> = None;
 
-        while attempts < self.max_retries {
+        while attempts < self.retry_config.max_retries {
             attempts += 1;
 
+            self.rate_limiter.acquire().await;
+
             match self.execute_request(url).await {
-                Ok(response) => return self.handle_response(response).await,
-                Err(e) if e.is_retryable() && attempts < self.max_retries => {
-                    let delay = self.calculate_retry_delay(&e, attempts);
+                Ok(response) => {
+                    let result = self.handle_response::<T>(response, &cache_key).await;
+                    return result;
+                }
+                Err(e) if e.is_retryable() && attempts < self.retry_config.max_retries => {
+                    if let PolygonError::RateLimit { retry_after } = &e {
+                        retry_after_hint = Some(*retry_after);
+                    }
+
+                    let delay = self
+                        .retry_config
+                        .calculate_delay_with_hint(attempts, retry_after_hint);
+
                     warn!(
                         error = %e,
                         attempt = attempts,
                         delay_ms = delay.as_millis(),
                         "request failed, retrying"
                     );
+
                     tokio::time::sleep(delay).await;
                     last_error = Some(e);
                 }
@@ -171,7 +334,11 @@ impl PolygonClient {
         Ok(self.client.get(url).send().await?)
     }
 
-    async fn handle_response<T>(&self, response: Response) -> Result<T, PolygonError>
+    async fn handle_response<T>(
+        &self,
+        response: Response,
+        cache_key: &str,
+    ) -> Result<T, PolygonError>
     where
         T: DeserializeOwned,
     {
@@ -187,6 +354,9 @@ impl PolygonClient {
         match status {
             StatusCode::OK => {
                 let body = response.text().await?;
+
+                self.cache.insert(cache_key.to_string(), body.clone()).await;
+
                 serde_json::from_str(&body).map_err(PolygonError::from)
             }
             StatusCode::TOO_MANY_REQUESTS => {
@@ -196,7 +366,7 @@ impl PolygonClient {
                     .and_then(|v| v.to_str().ok())
                     .and_then(|s| s.parse::<u64>().ok())
                     .map(Duration::from_secs)
-                    .unwrap_or(DEFAULT_RETRY_DELAY);
+                    .unwrap_or(Duration::from_secs(1));
 
                 Err(PolygonError::RateLimit { retry_after })
             }
@@ -216,13 +386,6 @@ impl PolygonClient {
                     request_id,
                 ))
             }
-        }
-    }
-
-    fn calculate_retry_delay(&self, error: &PolygonError, attempt: u32) -> Duration {
-        match error {
-            PolygonError::RateLimit { retry_after } => *retry_after,
-            _ => DEFAULT_RETRY_DELAY * attempt,
         }
     }
 
