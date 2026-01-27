@@ -1,0 +1,104 @@
+{
+  "id": "POLYMCP-001",
+  "title": "MCP Protocol Core",
+  "type": "epic",
+  "status": "ready",
+  "priority": "critical",
+  "labels": [
+    "epic",
+    "component:mcp-core",
+    "component:mcp-transport",
+    "mvp",
+    "priority:critical"
+  ],
+  "milestone": "M0: Foundation",
+  "description": "Implement the Model Context Protocol (MCP) specification v2025-11-25 in Rust. This includes JSON-RPC 2.0 message handling, the stdio transport layer, and all core MCP types (tools, resources, prompts). The server must handle initialization handshake, capability negotiation, and tool invocation lifecycle.",
+  "goals": [
+    "Full MCP v2025-11-25 protocol compliance",
+    "Async JSON-RPC 2.0 over stdio",
+    "Type-safe request/response handling",
+    "Proper error codes and messages"
+  ],
+  "children": [
+    "POLYMCP-010",
+    "POLYMCP-011",
+    "POLYMCP-012",
+    "POLYMCP-013"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "given": "An MCP client sends an initialize request",
+      "when": "The server receives the request",
+      "then": "It responds with serverInfo, capabilities, and protocolVersion matching the spec"
+    },
+    {
+      "id": "AC-2",
+      "given": "A client calls tools/list",
+      "when": "The server has registered tools",
+      "then": "It returns a JSON array of Tool objects with name, description, and inputSchema"
+    },
+    {
+      "id": "AC-3",
+      "given": "A client calls tools/call with valid arguments",
+      "when": "The tool executes successfully",
+      "then": "It returns CallToolResult with content array and optional structuredContent"
+    },
+    {
+      "id": "AC-4",
+      "given": "A client sends a malformed JSON-RPC request",
+      "when": "The server parses the message",
+      "then": "It returns a JSON-RPC error with appropriate code (-32700 parse, -32600 invalid, etc.)"
+    },
+    {
+      "id": "AC-5",
+      "given": "The MCP server binary",
+      "when": "Started with stdio transport",
+      "then": "It reads newline-delimited JSON from stdin and writes responses to stdout"
+    }
+  ],
+  "technical_context": {
+    "crates": [
+      "tokio",
+      "serde",
+      "serde_json",
+      "thiserror",
+      "tracing"
+    ],
+    "files": [
+      "src/lib.rs",
+      "src/mcp/mod.rs",
+      "src/mcp/types.rs",
+      "src/mcp/jsonrpc.rs",
+      "src/mcp/server.rs",
+      "src/mcp/transport.rs",
+      "src/mcp/error.rs"
+    ],
+    "mcp_methods": [
+      "initialize",
+      "notifications/initialized",
+      "ping",
+      "tools/list",
+      "tools/call",
+      "notifications/cancelled"
+    ],
+    "interfaces": [
+      {
+        "name": "McpServer",
+        "signature": "pub struct McpServer { ... }",
+        "description": "Main server struct handling MCP protocol"
+      },
+      {
+        "name": "Tool",
+        "signature": "pub trait Tool: Send + Sync { async fn call(&self, args: Value) -> Result<CallToolResult>; }",
+        "description": "Trait for implementing MCP tools"
+      }
+    ]
+  },
+  "out_of_scope": [
+    "SSE transport (future milestone)",
+    "Resources implementation (separate epic)",
+    "Prompts implementation (not needed for this project)",
+    "Sampling/LLM integration"
+  ]
+}

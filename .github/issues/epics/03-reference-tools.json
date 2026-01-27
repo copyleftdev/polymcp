@@ -1,0 +1,92 @@
+{
+  "id": "POLYMCP-004",
+  "title": "Reference Data Tools",
+  "type": "epic",
+  "status": "draft",
+  "priority": "high",
+  "labels": [
+    "epic",
+    "component:tools",
+    "api:reference",
+    "mvp",
+    "priority:high"
+  ],
+  "milestone": "M1: Core Tools",
+  "depends_on": ["POLYMCP-001", "POLYMCP-002"],
+  "description": "Implement MCP tools for Polygon.io Reference Data API. Includes ticker details, market status, conditions, exchanges, news, dividends, splits, and financials. Essential for understanding market context and company information.",
+  "goals": [
+    "Complete coverage of Reference API endpoints",
+    "Searchable ticker lookup",
+    "Market hours and holiday awareness",
+    "Corporate actions (dividends, splits) access"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "given": "A user wants ticker details",
+      "when": "The get_ticker_details tool is called with ticker=AAPL",
+      "then": "It returns name, market, locale, type, currency, description, homepage_url, branding"
+    },
+    {
+      "id": "AC-2",
+      "given": "A user wants to search tickers",
+      "when": "The search_tickers tool is called with search=Apple",
+      "then": "It returns matching tickers with name, market, type, and active status"
+    },
+    {
+      "id": "AC-3",
+      "given": "A user wants market status",
+      "when": "The get_market_status tool is called",
+      "then": "It returns current market status (open/closed/early_trading/etc) for each market"
+    },
+    {
+      "id": "AC-4",
+      "given": "A user wants upcoming market holidays",
+      "when": "The get_market_holidays tool is called",
+      "then": "It returns list of upcoming holidays with date, exchange, name, status"
+    },
+    {
+      "id": "AC-5",
+      "given": "A user wants dividend history",
+      "when": "The get_dividends tool is called with ticker=AAPL",
+      "then": "It returns dividend records with ex_date, pay_date, cash_amount, frequency"
+    },
+    {
+      "id": "AC-6",
+      "given": "A user wants stock news",
+      "when": "The get_news tool is called with ticker=TSLA",
+      "then": "It returns news articles with title, author, published_utc, article_url, tickers"
+    }
+  ],
+  "technical_context": {
+    "crates": [],
+    "files": [
+      "src/tools/reference/mod.rs",
+      "src/tools/reference/tickers.rs",
+      "src/tools/reference/market_status.rs",
+      "src/tools/reference/conditions.rs",
+      "src/tools/reference/exchanges.rs",
+      "src/tools/reference/news.rs",
+      "src/tools/reference/dividends.rs",
+      "src/tools/reference/splits.rs",
+      "src/tools/reference/financials.rs"
+    ],
+    "polygon_endpoints": [
+      "/v3/reference/tickers",
+      "/v3/reference/tickers/{ticker}",
+      "/v3/reference/tickers/types",
+      "/v1/marketstatus/now",
+      "/v1/marketstatus/upcoming",
+      "/v3/reference/conditions",
+      "/v3/reference/exchanges",
+      "/v2/reference/news",
+      "/v3/reference/dividends",
+      "/v3/reference/splits",
+      "/vX/reference/financials"
+    ]
+  },
+  "out_of_scope": [
+    "SEC filings parsing",
+    "Historical financials comparison"
+  ]
+}

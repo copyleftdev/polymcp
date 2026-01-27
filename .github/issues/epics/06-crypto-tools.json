@@ -1,0 +1,63 @@
+{
+  "id": "POLYMCP-007",
+  "title": "Crypto API Tools",
+  "type": "epic",
+  "status": "draft",
+  "priority": "medium",
+  "labels": [
+    "epic",
+    "component:tools",
+    "api:crypto",
+    "priority:medium"
+  ],
+  "milestone": "M2: Full Coverage",
+  "depends_on": ["POLYMCP-001", "POLYMCP-002"],
+  "description": "Implement MCP tools for Polygon.io Crypto API. Includes cryptocurrency aggregates, trades, snapshots, and exchange information for digital asset markets.",
+  "goals": [
+    "Crypto price data access",
+    "Multi-exchange trade data",
+    "Historical crypto OHLCV",
+    "Real-time snapshots"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "given": "A user wants BTC/USD aggregates",
+      "when": "The get_crypto_aggregates tool is called with ticker=X:BTCUSD",
+      "then": "It returns OHLCV bars for the crypto pair"
+    },
+    {
+      "id": "AC-2",
+      "given": "A user wants crypto trades",
+      "when": "The get_crypto_trades tool is called with ticker=X:ETHUSD",
+      "then": "It returns recent trades with price, size, exchange, timestamp"
+    },
+    {
+      "id": "AC-3",
+      "given": "A user wants crypto snapshot",
+      "when": "The get_crypto_snapshot tool is called",
+      "then": "It returns current prices and 24h changes for major cryptos"
+    }
+  ],
+  "technical_context": {
+    "files": [
+      "src/tools/crypto/mod.rs",
+      "src/tools/crypto/aggregates.rs",
+      "src/tools/crypto/trades.rs",
+      "src/tools/crypto/snapshots.rs"
+    ],
+    "polygon_endpoints": [
+      "/v2/aggs/ticker/{cryptoTicker}/range/{multiplier}/{timespan}/{from}/{to}",
+      "/v2/aggs/grouped/locale/global/market/crypto/{date}",
+      "/v3/trades/{cryptoTicker}",
+      "/v1/last/crypto/{from}/{to}",
+      "/v1/open-close/crypto/{from}/{to}/{date}",
+      "/v2/snapshot/locale/global/markets/crypto/tickers",
+      "/v2/snapshot/locale/global/markets/crypto/{direction}"
+    ]
+  },
+  "out_of_scope": [
+    "DeFi protocols",
+    "On-chain data"
+  ]
+}

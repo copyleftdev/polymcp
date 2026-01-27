@@ -1,0 +1,92 @@
+{
+  "id": "POLYMCP-003",
+  "title": "Stocks API Tools",
+  "type": "epic",
+  "status": "draft",
+  "priority": "high",
+  "labels": [
+    "epic",
+    "component:tools",
+    "api:stocks",
+    "mvp",
+    "priority:high"
+  ],
+  "milestone": "M1: Core Tools",
+  "depends_on": ["POLYMCP-001", "POLYMCP-002"],
+  "description": "Implement MCP tools for all Polygon.io Stocks API endpoints. Includes aggregates (OHLCV bars), trades, quotes, snapshots, and technical indicators. These are the most commonly used endpoints for stock market analysis.",
+  "goals": [
+    "Complete coverage of Stocks API endpoints",
+    "Intuitive tool naming and parameters",
+    "Rich return data with proper typing",
+    "Helpful error messages for invalid tickers/dates"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "given": "A user requests stock aggregates for AAPL",
+      "when": "The get_stock_aggregates tool is called with ticker=AAPL, from=2024-01-01, to=2024-01-31, timespan=day",
+      "then": "It returns OHLCV bars with timestamp, open, high, low, close, volume, vwap"
+    },
+    {
+      "id": "AC-2",
+      "given": "A user requests the last trade for TSLA",
+      "when": "The get_last_trade tool is called with ticker=TSLA",
+      "then": "It returns price, size, exchange, timestamp, and conditions"
+    },
+    {
+      "id": "AC-3",
+      "given": "A user requests a stock snapshot",
+      "when": "The get_stock_snapshot tool is called with ticker=MSFT",
+      "then": "It returns day/prevDay aggregates, lastTrade, lastQuote, and min aggregates"
+    },
+    {
+      "id": "AC-4",
+      "given": "A user requests SMA indicator",
+      "when": "The get_sma tool is called with ticker, window, timespan",
+      "then": "It returns SMA values with timestamps"
+    },
+    {
+      "id": "AC-5",
+      "given": "An invalid ticker symbol",
+      "when": "Any stocks tool is called",
+      "then": "It returns a clear error message indicating the ticker was not found"
+    }
+  ],
+  "technical_context": {
+    "crates": [],
+    "files": [
+      "src/tools/mod.rs",
+      "src/tools/stocks/mod.rs",
+      "src/tools/stocks/aggregates.rs",
+      "src/tools/stocks/trades.rs",
+      "src/tools/stocks/quotes.rs",
+      "src/tools/stocks/snapshots.rs",
+      "src/tools/stocks/indicators.rs"
+    ],
+    "mcp_methods": [
+      "tools/list",
+      "tools/call"
+    ],
+    "polygon_endpoints": [
+      "/v2/aggs/ticker/{stocksTicker}/range/{multiplier}/{timespan}/{from}/{to}",
+      "/v2/aggs/ticker/{stocksTicker}/prev",
+      "/v2/aggs/grouped/locale/us/market/stocks/{date}",
+      "/v3/trades/{stockTicker}",
+      "/v2/last/trade/{stocksTicker}",
+      "/v3/quotes/{stockTicker}",
+      "/v2/last/nbbo/{stocksTicker}",
+      "/v1/open-close/{stocksTicker}/{date}",
+      "/v2/snapshot/locale/us/markets/stocks/tickers",
+      "/v2/snapshot/locale/us/markets/stocks/tickers/{stocksTicker}",
+      "/v2/snapshot/locale/us/markets/stocks/{direction}",
+      "/v1/indicators/sma/{stockTicker}",
+      "/v1/indicators/ema/{stockTicker}",
+      "/v1/indicators/macd/{stockTicker}",
+      "/v1/indicators/rsi/{stockTicker}"
+    ]
+  },
+  "out_of_scope": [
+    "Real-time WebSocket data",
+    "Historical tick-by-tick data export"
+  ]
+}

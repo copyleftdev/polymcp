@@ -1,0 +1,63 @@
+{
+  "id": "POLYMCP-008",
+  "title": "Indices API Tools",
+  "type": "epic",
+  "status": "draft",
+  "priority": "medium",
+  "labels": [
+    "epic",
+    "component:tools",
+    "api:indices",
+    "priority:medium"
+  ],
+  "milestone": "M2: Full Coverage",
+  "depends_on": ["POLYMCP-001", "POLYMCP-002"],
+  "description": "Implement MCP tools for Polygon.io Indices API. Includes index values, aggregates, and snapshots for market indices like S&P 500, NASDAQ, and Dow Jones.",
+  "goals": [
+    "Index value data access",
+    "Historical index performance",
+    "Index snapshots",
+    "Technical indicators on indices"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "given": "A user wants S&P 500 aggregates",
+      "when": "The get_index_aggregates tool is called with ticker=I:SPX",
+      "then": "It returns OHLC bars for the index"
+    },
+    {
+      "id": "AC-2",
+      "given": "A user wants NASDAQ daily open/close",
+      "when": "The get_index_open_close tool is called with ticker=I:NDX, date=2024-01-15",
+      "then": "It returns open, high, low, close values for that date"
+    },
+    {
+      "id": "AC-3",
+      "given": "A user wants index snapshot",
+      "when": "The get_index_snapshot tool is called",
+      "then": "It returns current values for major indices with change percentages"
+    }
+  ],
+  "technical_context": {
+    "files": [
+      "src/tools/indices/mod.rs",
+      "src/tools/indices/aggregates.rs",
+      "src/tools/indices/snapshots.rs"
+    ],
+    "polygon_endpoints": [
+      "/v2/aggs/ticker/{indicesTicker}/range/{multiplier}/{timespan}/{from}/{to}",
+      "/v2/aggs/ticker/{indicesTicker}/prev",
+      "/v1/open-close/{indicesTicker}/{date}",
+      "/v3/snapshot/indices",
+      "/v1/indicators/sma/{indicesTicker}",
+      "/v1/indicators/ema/{indicesTicker}",
+      "/v1/indicators/macd/{indicesTicker}",
+      "/v1/indicators/rsi/{indicesTicker}"
+    ]
+  },
+  "out_of_scope": [
+    "Index constituents",
+    "Index rebalancing data"
+  ]
+}

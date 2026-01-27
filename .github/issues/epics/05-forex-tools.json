@@ -1,0 +1,64 @@
+{
+  "id": "POLYMCP-006",
+  "title": "Forex API Tools",
+  "type": "epic",
+  "status": "draft",
+  "priority": "medium",
+  "labels": [
+    "epic",
+    "component:tools",
+    "api:forex",
+    "priority:medium"
+  ],
+  "milestone": "M2: Full Coverage",
+  "depends_on": ["POLYMCP-001", "POLYMCP-002"],
+  "description": "Implement MCP tools for Polygon.io Forex API. Includes currency pair aggregates, quotes, conversions, and snapshots for foreign exchange markets.",
+  "goals": [
+    "Currency pair data access",
+    "Real-time conversion rates",
+    "Historical forex data",
+    "Market gainers/losers"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "given": "A user wants EUR/USD aggregates",
+      "when": "The get_forex_aggregates tool is called with ticker=C:EURUSD",
+      "then": "It returns OHLCV bars for the currency pair"
+    },
+    {
+      "id": "AC-2",
+      "given": "A user wants currency conversion",
+      "when": "The convert_currency tool is called with from=USD, to=EUR, amount=100",
+      "then": "It returns converted amount with exchange rate"
+    },
+    {
+      "id": "AC-3",
+      "given": "A user wants forex snapshot",
+      "when": "The get_forex_snapshot tool is called",
+      "then": "It returns current quotes for major currency pairs"
+    }
+  ],
+  "technical_context": {
+    "files": [
+      "src/tools/forex/mod.rs",
+      "src/tools/forex/aggregates.rs",
+      "src/tools/forex/quotes.rs",
+      "src/tools/forex/conversion.rs",
+      "src/tools/forex/snapshots.rs"
+    ],
+    "polygon_endpoints": [
+      "/v2/aggs/ticker/{forexTicker}/range/{multiplier}/{timespan}/{from}/{to}",
+      "/v2/aggs/grouped/locale/global/market/fx/{date}",
+      "/v3/quotes/{fxTicker}",
+      "/v1/last_quote/currencies/{from}/{to}",
+      "/v1/conversion/{from}/{to}",
+      "/v2/snapshot/locale/global/markets/forex/tickers",
+      "/v2/snapshot/locale/global/markets/forex/{direction}"
+    ]
+  },
+  "out_of_scope": [
+    "Forward rates",
+    "Interest rate differentials"
+  ]
+}

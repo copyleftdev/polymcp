@@ -1,0 +1,88 @@
+{
+  "project": "polygon-mcp",
+  "description": "MCP server providing Polygon.io financial data API as tools for AI assistants",
+  "issues": {
+    "POLYMCP-001": {
+      "title": "MCP Protocol Core",
+      "type": "epic",
+      "status": "ready",
+      "milestone": "M0: Foundation"
+    },
+    "POLYMCP-002": {
+      "title": "Polygon.io HTTP Client",
+      "type": "epic",
+      "status": "ready",
+      "milestone": "M0: Foundation"
+    },
+    "POLYMCP-003": {
+      "title": "Stocks API Tools",
+      "type": "epic",
+      "status": "draft",
+      "milestone": "M1: Core Tools"
+    },
+    "POLYMCP-004": {
+      "title": "Reference Data Tools",
+      "type": "epic",
+      "status": "draft",
+      "milestone": "M1: Core Tools"
+    },
+    "POLYMCP-005": {
+      "title": "Options API Tools",
+      "type": "epic",
+      "status": "draft",
+      "milestone": "M2: Full Coverage"
+    },
+    "POLYMCP-006": {
+      "title": "Forex API Tools",
+      "type": "epic",
+      "status": "draft",
+      "milestone": "M2: Full Coverage"
+    },
+    "POLYMCP-007": {
+      "title": "Crypto API Tools",
+      "type": "epic",
+      "status": "draft",
+      "milestone": "M2: Full Coverage"
+    },
+    "POLYMCP-008": {
+      "title": "Indices API Tools",
+      "type": "epic",
+      "status": "draft",
+      "milestone": "M2: Full Coverage"
+    },
+    "POLYMCP-009": {
+      "title": "Production Hardening",
+      "type": "epic",
+      "status": "draft",
+      "milestone": "M3: Production"
+    }
+  },
+  "dependency_graph": {
+    "POLYMCP-001": [],
+    "POLYMCP-002": [],
+    "POLYMCP-003": ["POLYMCP-001", "POLYMCP-002"],
+    "POLYMCP-004": ["POLYMCP-001", "POLYMCP-002"],
+    "POLYMCP-005": ["POLYMCP-001", "POLYMCP-002", "POLYMCP-003"],
+    "POLYMCP-006": ["POLYMCP-001", "POLYMCP-002"],
+    "POLYMCP-007": ["POLYMCP-001", "POLYMCP-002"],
+    "POLYMCP-008": ["POLYMCP-001", "POLYMCP-002"],
+    "POLYMCP-009": ["POLYMCP-003", "POLYMCP-004"]
+  },
+  "milestone_order": [
+    "M0: Foundation",
+    "M1: Core Tools",
+    "M2: Full Coverage",
+    "M3: Production"
+  ],
+  "implementation_order": [
+    "POLYMCP-001",
+    "POLYMCP-002",
+    "POLYMCP-003",
+    "POLYMCP-004",
+    "POLYMCP-005",
+    "POLYMCP-006",
+    "POLYMCP-007",
+    "POLYMCP-008",
+    "POLYMCP-009"
+  ]
+}

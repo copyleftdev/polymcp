@@ -1,0 +1,73 @@
+{
+  "id": "POLYMCP-009",
+  "title": "Production Hardening",
+  "type": "epic",
+  "status": "draft",
+  "priority": "medium",
+  "labels": [
+    "epic",
+    "priority:medium"
+  ],
+  "milestone": "M3: Production",
+  "depends_on": ["POLYMCP-003", "POLYMCP-004"],
+  "description": "Production-ready hardening including comprehensive error handling, rate limit management, optional caching, structured logging, documentation, and release packaging.",
+  "goals": [
+    "Robust error handling with retries",
+    "Configurable rate limiting",
+    "Optional response caching",
+    "Comprehensive documentation",
+    "Release binaries for major platforms"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "given": "Polygon API returns a transient error",
+      "when": "The client retries",
+      "then": "It uses exponential backoff with jitter and respects max retries config"
+    },
+    {
+      "id": "AC-2",
+      "given": "A user makes many requests quickly",
+      "when": "Approaching rate limits",
+      "then": "The client proactively throttles to avoid 429s"
+    },
+    {
+      "id": "AC-3",
+      "given": "Caching is enabled",
+      "when": "The same request is made within TTL",
+      "then": "The cached response is returned without API call"
+    },
+    {
+      "id": "AC-4",
+      "given": "The project",
+      "when": "cargo doc is run",
+      "then": "All public items have documentation with examples"
+    },
+    {
+      "id": "AC-5",
+      "given": "A release is tagged",
+      "when": "CI runs",
+      "then": "Binaries are published for Linux, macOS, and Windows"
+    }
+  ],
+  "technical_context": {
+    "crates": [
+      "tracing",
+      "tracing-subscriber",
+      "moka",
+      "config"
+    ],
+    "files": [
+      "src/config.rs",
+      "src/cache.rs",
+      "src/retry.rs",
+      ".github/workflows/release.yml",
+      "README.md",
+      "CHANGELOG.md"
+    ]
+  },
+  "out_of_scope": [
+    "Metrics/Prometheus endpoint",
+    "Admin API"
+  ]
+}

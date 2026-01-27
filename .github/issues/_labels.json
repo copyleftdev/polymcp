@@ -1,0 +1,119 @@
+{
+  "labels": [
+    {
+      "name": "epic",
+      "color": "6f42c1",
+      "description": "Large feature containing multiple stories"
+    },
+    {
+      "name": "story",
+      "color": "0366d6",
+      "description": "User-facing feature or capability"
+    },
+    {
+      "name": "task",
+      "color": "1d76db",
+      "description": "Technical work item"
+    },
+    {
+      "name": "bug",
+      "color": "d73a4a",
+      "description": "Something isn't working"
+    },
+    {
+      "name": "spike",
+      "color": "fbca04",
+      "description": "Research or investigation task"
+    },
+    {
+      "name": "component:mcp-core",
+      "color": "c5def5",
+      "description": "MCP protocol types and JSON-RPC handling"
+    },
+    {
+      "name": "component:mcp-transport",
+      "color": "c5def5",
+      "description": "MCP transport layer (stdio, SSE)"
+    },
+    {
+      "name": "component:polygon-client",
+      "color": "c5def5",
+      "description": "Polygon.io HTTP client"
+    },
+    {
+      "name": "component:tools",
+      "color": "c5def5",
+      "description": "MCP tool implementations"
+    },
+    {
+      "name": "component:resources",
+      "color": "c5def5",
+      "description": "MCP resource implementations"
+    },
+    {
+      "name": "api:stocks",
+      "color": "bfdadc",
+      "description": "Polygon Stocks API endpoints"
+    },
+    {
+      "name": "api:options",
+      "color": "bfdadc",
+      "description": "Polygon Options API endpoints"
+    },
+    {
+      "name": "api:forex",
+      "color": "bfdadc",
+      "description": "Polygon Forex API endpoints"
+    },
+    {
+      "name": "api:crypto",
+      "color": "bfdadc",
+      "description": "Polygon Crypto API endpoints"
+    },
+    {
+      "name": "api:indices",
+      "color": "bfdadc",
+      "description": "Polygon Indices API endpoints"
+    },
+    {
+      "name": "api:reference",
+      "color": "bfdadc",
+      "description": "Polygon Reference API endpoints"
+    },
+    {
+      "name": "priority:critical",
+      "color": "b60205",
+      "description": "Must be done immediately"
+    },
+    {
+      "name": "priority:high",
+      "color": "d93f0b",
+      "description": "Important for current milestone"
+    },
+    {
+      "name": "priority:medium",
+      "color": "fbca04",
+      "description": "Normal priority"
+    },
+    {
+      "name": "priority:low",
+      "color": "0e8a16",
+      "description": "Nice to have"
+    },
+    {
+      "name": "mvp",
+      "color": "0e8a16",
+      "description": "Required for MVP release"
+    },
+    {
+      "name": "status:blocked",
+      "color": "d73a4a",
+      "description": "Cannot proceed due to dependency"
+    },
+    {
+      "name": "status:ready",
+      "color": "0e8a16",
+      "description": "Ready for implementation"
+    }
+  ]
+}

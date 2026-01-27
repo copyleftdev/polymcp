@@ -1,0 +1,63 @@
+{
+  "id": "POLYMCP-005",
+  "title": "Options API Tools",
+  "type": "epic",
+  "status": "draft",
+  "priority": "medium",
+  "labels": [
+    "epic",
+    "component:tools",
+    "api:options",
+    "priority:medium"
+  ],
+  "milestone": "M2: Full Coverage",
+  "depends_on": ["POLYMCP-001", "POLYMCP-002", "POLYMCP-003"],
+  "description": "Implement MCP tools for Polygon.io Options API. Includes options contracts lookup, aggregates, trades, quotes, snapshots, and the options chain. Leverages patterns established in Stocks API tools.",
+  "goals": [
+    "Options contract discovery and details",
+    "Options chain with Greeks",
+    "Historical options data access",
+    "Snapshot of options activity"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "given": "A user wants options contracts for a stock",
+      "when": "The get_options_contracts tool is called with underlying_ticker=AAPL",
+      "then": "It returns list of contracts with ticker, expiration_date, strike_price, contract_type"
+    },
+    {
+      "id": "AC-2",
+      "given": "A user wants options aggregates",
+      "when": "The get_options_aggregates tool is called with options ticker",
+      "then": "It returns OHLCV bars for the options contract"
+    },
+    {
+      "id": "AC-3",
+      "given": "A user wants options snapshot",
+      "when": "The get_options_snapshot tool is called with underlying=AAPL",
+      "then": "It returns snapshot with greeks, implied_volatility, open_interest for each contract"
+    }
+  ],
+  "technical_context": {
+    "files": [
+      "src/tools/options/mod.rs",
+      "src/tools/options/contracts.rs",
+      "src/tools/options/aggregates.rs",
+      "src/tools/options/snapshots.rs"
+    ],
+    "polygon_endpoints": [
+      "/v3/reference/options/contracts",
+      "/v3/reference/options/contracts/{options_ticker}",
+      "/v2/aggs/ticker/{optionsTicker}/range/{multiplier}/{timespan}/{from}/{to}",
+      "/v3/trades/{optionsTicker}",
+      "/v3/quotes/{optionsTicker}",
+      "/v3/snapshot/options/{underlyingAsset}",
+      "/v3/snapshot/options/{underlyingAsset}/{optionContract}"
+    ]
+  },
+  "out_of_scope": [
+    "Options pricing calculations",
+    "Greeks computation (use Polygon's)"
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "id": "POLYMCP-002",
+  "title": "Polygon.io HTTP Client",
+  "type": "epic",
+  "status": "ready",
+  "priority": "critical",
+  "labels": [
+    "epic",
+    "component:polygon-client",
+    "mvp",
+    "priority:critical"
+  ],
+  "milestone": "M0: Foundation",
+  "description": "Implement a robust async HTTP client for the Polygon.io REST API. Must handle authentication, rate limiting, pagination, and error responses. The client will be used by all MCP tools to fetch market data.",
+  "goals": [
+    "Type-safe API request/response handling",
+    "Automatic rate limit handling with backoff",
+    "Connection pooling and keep-alive",
+    "Comprehensive error types with context"
+  ],
+  "children": [
+    "POLYMCP-020",
+    "POLYMCP-021",
+    "POLYMCP-022"
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "given": "A valid Polygon.io API key",
+      "when": "The client makes an authenticated request",
+      "then": "The API key is included in the Authorization header or query param"
+    },
+    {
+      "id": "AC-2",
+      "given": "A rate-limited response (429)",
+      "when": "The client receives the response",
+      "then": "It waits according to retry-after and retries automatically"
+    },
+    {
+      "id": "AC-3",
+      "given": "A paginated endpoint",
+      "when": "Results span multiple pages",
+      "then": "The client can iterate through all pages using the cursor"
+    },
+    {
+      "id": "AC-4",
+      "given": "An API error response",
+      "when": "The client receives status >= 400",
+      "then": "It returns a typed error with status code, message, and request context"
+    },
+    {
+      "id": "AC-5",
+      "given": "The POLYGON_API_KEY environment variable",
+      "when": "The client is constructed without explicit key",
+      "then": "It reads the key from the environment"
+    }
+  ],
+  "technical_context": {
+    "crates": [
+      "reqwest",
+      "tokio",
+      "serde",
+      "serde_json",
+      "thiserror",
+      "url"
+    ],
+    "files": [
+      "src/polygon/mod.rs",
+      "src/polygon/client.rs",
+      "src/polygon/error.rs",
+      "src/polygon/types.rs",
+      "src/polygon/pagination.rs"
+    ],
+    "polygon_endpoints": [
+      "Base URL: https://api.polygon.io",
+      "Auth: apiKey query param or Authorization header"
+    ],
+    "interfaces": [
+      {
+        "name": "PolygonClient",
+        "signature": "pub struct PolygonClient { ... }",
+        "description": "Main HTTP client for Polygon.io API"
+      },
+      {
+        "name": "PolygonError",
+        "signature": "pub enum PolygonError { RateLimit { retry_after: Duration }, ... }",
+        "description": "Typed errors for API responses"
+      }
+    ]
+  },
+  "out_of_scope": [
+    "WebSocket streaming API",
+    "Local caching layer (future milestone)",
+    "Request batching"
+  ]
+}
