@@ -31,6 +31,9 @@ pub enum PolygonError {
 
     #[error("max retries exceeded after {attempts} attempts")]
     MaxRetriesExceeded { attempts: u32 },
+
+    #[error("invalid parameter: {0}")]
+    InvalidParams(String),
 }
 
 impl PolygonError {
