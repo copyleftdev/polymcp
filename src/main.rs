@@ -1,10 +1,11 @@
 use std::sync::Arc;
 
 use polygon_mcp::{
-    ConvertCurrency, GetDividends, GetEma, GetForexAggregates, GetForexSnapshot, GetLastTrade,
-    GetMacd, GetMarketHolidays, GetMarketStatus, GetNews, GetOptionsAggregates,
-    GetOptionsContracts, GetOptionsSnapshot, GetRsi, GetSma, GetStockAggregates, GetStockSnapshot,
-    GetStockSplits, GetTickerDetails, McpServer, PolygonClient, SearchTickers,
+    ConvertCurrency, GetCryptoAggregates, GetCryptoSnapshot, GetCryptoTrades, GetDividends, GetEma,
+    GetForexAggregates, GetForexSnapshot, GetLastTrade, GetMacd, GetMarketHolidays,
+    GetMarketStatus, GetNews, GetOptionsAggregates, GetOptionsContracts, GetOptionsSnapshot,
+    GetRsi, GetSma, GetStockAggregates, GetStockSnapshot, GetStockSplits, GetTickerDetails,
+    McpServer, PolygonClient, SearchTickers,
 };
 use tracing_subscriber::EnvFilter;
 
@@ -39,6 +40,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .tool(GetForexAggregates::new(polygon.clone()))
         .tool(ConvertCurrency::new(polygon.clone()))
         .tool(GetForexSnapshot::new(polygon.clone()))
+        .tool(GetCryptoAggregates::new(polygon.clone()))
+        .tool(GetCryptoTrades::new(polygon.clone()))
+        .tool(GetCryptoSnapshot::new(polygon.clone()))
         .build();
 
     server.run().await?;
