@@ -9,6 +9,6 @@ pub use mcp::{
 pub use polygon::{PagedResponse, Paginator, PolygonClient, PolygonClientBuilder, PolygonError};
 pub use tools::{
     GetDividends, GetEma, GetLastTrade, GetMacd, GetMarketHolidays, GetMarketStatus, GetNews,
-    GetRsi, GetSma, GetStockAggregates, GetStockSnapshot, GetStockSplits, GetTickerDetails,
-    SearchTickers,
+    GetOptionsAggregates, GetOptionsContracts, GetOptionsSnapshot, GetRsi, GetSma,
+    GetStockAggregates, GetStockSnapshot, GetStockSplits, GetTickerDetails, SearchTickers,
 };
