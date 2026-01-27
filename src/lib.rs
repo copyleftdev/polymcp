@@ -9,8 +9,8 @@ pub use mcp::{
 pub use polygon::{PagedResponse, Paginator, PolygonClient, PolygonClientBuilder, PolygonError};
 pub use tools::{
     ConvertCurrency, GetCryptoAggregates, GetCryptoSnapshot, GetCryptoTrades, GetDividends, GetEma,
-    GetForexAggregates, GetForexSnapshot, GetLastTrade, GetMacd, GetMarketHolidays,
-    GetMarketStatus, GetNews, GetOptionsAggregates, GetOptionsContracts, GetOptionsSnapshot,
-    GetRsi, GetSma, GetStockAggregates, GetStockSnapshot, GetStockSplits, GetTickerDetails,
-    SearchTickers,
+    GetForexAggregates, GetForexSnapshot, GetIndexAggregates, GetIndexOpenClose, GetIndexSnapshot,
+    GetLastTrade, GetMacd, GetMarketHolidays, GetMarketStatus, GetNews, GetOptionsAggregates,
+    GetOptionsContracts, GetOptionsSnapshot, GetRsi, GetSma, GetStockAggregates, GetStockSnapshot,
+    GetStockSplits, GetTickerDetails, SearchTickers,
 };
