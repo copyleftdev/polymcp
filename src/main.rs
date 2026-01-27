@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
 use polygon_mcp::{
-    GetEma, GetLastTrade, GetMacd, GetRsi, GetSma, GetStockAggregates, GetStockSnapshot, McpServer,
-    PolygonClient,
+    GetDividends, GetEma, GetLastTrade, GetMacd, GetMarketHolidays, GetMarketStatus, GetNews,
+    GetRsi, GetSma, GetStockAggregates, GetStockSnapshot, GetStockSplits, GetTickerDetails,
+    McpServer, PolygonClient, SearchTickers,
 };
 use tracing_subscriber::EnvFilter;
 
@@ -24,6 +25,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .tool(GetEma::new(polygon.clone()))
         .tool(GetRsi::new(polygon.clone()))
         .tool(GetMacd::new(polygon.clone()))
+        .tool(GetTickerDetails::new(polygon.clone()))
+        .tool(SearchTickers::new(polygon.clone()))
+        .tool(GetMarketStatus::new(polygon.clone()))
+        .tool(GetMarketHolidays::new(polygon.clone()))
+        .tool(GetDividends::new(polygon.clone()))
+        .tool(GetNews::new(polygon.clone()))
+        .tool(GetStockSplits::new(polygon.clone()))
         .build();
 
     server.run().await?;
