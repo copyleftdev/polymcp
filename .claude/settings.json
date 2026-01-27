@@ -1,7 +1,11 @@
 {
   "skills": {
     "project": [".claude/skills"],
-    "external": ["~/.claude/skills/sk1llz/languages/rust"]
+    "external": [
+      "~/.claude/skills/turon",
+      "~/.claude/skills/matsakis",
+      "~/.claude/skills/bos"
+    ]
   },
   "permissions": {
     "allow": [

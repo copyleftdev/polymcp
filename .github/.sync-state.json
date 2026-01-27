@@ -1,0 +1,88 @@
+{
+  "run_id": "bb831086",
+  "started_at": "2026-01-27T21:46:10.834107",
+  "completed_at": "2026-01-27T21:46:33.501692",
+  "records": {
+    "POLYMCP-002": {
+      "issue_id": "POLYMCP-002",
+      "action": "create",
+      "status": "completed",
+      "github_number": 1,
+      "content_hash": "56225b6e5bae0b62",
+      "error": null,
+      "timestamp": "2026-01-27T21:46:27.928736"
+    },
+    "POLYMCP-001": {
+      "issue_id": "POLYMCP-001",
+      "action": "create",
+      "status": "completed",
+      "github_number": 2,
+      "content_hash": "bf3102bfc69a9e8c",
+      "error": null,
+      "timestamp": "2026-01-27T21:46:28.633972"
+    },
+    "POLYMCP-003": {
+      "issue_id": "POLYMCP-003",
+      "action": "create",
+      "status": "completed",
+      "github_number": 3,
+      "content_hash": "8f5fc028c0ce9bc3",
+      "error": null,
+      "timestamp": "2026-01-27T21:46:29.376147"
+    },
+    "POLYMCP-005": {
+      "issue_id": "POLYMCP-005",
+      "action": "create",
+      "status": "completed",
+      "github_number": 4,
+      "content_hash": "07b340073bfbfbc3",
+      "error": null,
+      "timestamp": "2026-01-27T21:46:30.066097"
+    },
+    "POLYMCP-007": {
+      "issue_id": "POLYMCP-007",
+      "action": "create",
+      "status": "completed",
+      "github_number": 5,
+      "content_hash": "da03a6664df304c0",
+      "error": null,
+      "timestamp": "2026-01-27T21:46:30.733187"
+    },
+    "POLYMCP-004": {
+      "issue_id": "POLYMCP-004",
+      "action": "create",
+      "status": "completed",
+      "github_number": 6,
+      "content_hash": "da588014b108266b",
+      "error": null,
+      "timestamp": "2026-01-27T21:46:31.371904"
+    },
+    "POLYMCP-006": {
+      "issue_id": "POLYMCP-006",
+      "action": "create",
+      "status": "completed",
+      "github_number": 7,
+      "content_hash": "b92618b7517f1f66",
+      "error": null,
+      "timestamp": "2026-01-27T21:46:32.069115"
+    },
+    "POLYMCP-009": {
+      "issue_id": "POLYMCP-009",
+      "action": "create",
+      "status": "completed",
+      "github_number": 8,
+      "content_hash": "c1dc7b53bf3568ff",
+      "error": null,
+      "timestamp": "2026-01-27T21:46:32.729590"
+    },
+    "POLYMCP-008": {
+      "issue_id": "POLYMCP-008",
+      "action": "create",
+      "status": "completed",
+      "github_number": 9,
+      "content_hash": "af210bfdb5d7127f",
+      "error": null,
+      "timestamp": "2026-01-27T21:46:33.501435"
+    }
+  }
+}
