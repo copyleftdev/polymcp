@@ -115,8 +115,8 @@ impl Tool for GetSma {
                         "timespan".to_string(),
                         json!({
                             "type": "string",
-                            "description": "Aggregate timespan: minute, hour, day, week, month, quarter, year",
-                            "enum": ["minute", "hour", "day", "week", "month", "quarter", "year"],
+                            "description": "Aggregate timespan: second, minute, hour, day, week, month, quarter, year",
+                            "enum": ["second", "minute", "hour", "day", "week", "month", "quarter", "year"],
                             "default": "day"
                         }),
                     ),
@@ -275,8 +275,8 @@ impl Tool for GetEma {
                         "timespan".to_string(),
                         json!({
                             "type": "string",
-                            "description": "Aggregate timespan: minute, hour, day, week, month, quarter, year",
-                            "enum": ["minute", "hour", "day", "week", "month", "quarter", "year"],
+                            "description": "Aggregate timespan: second, minute, hour, day, week, month, quarter, year",
+                            "enum": ["second", "minute", "hour", "day", "week", "month", "quarter", "year"],
                             "default": "day"
                         }),
                     ),
@@ -427,8 +427,8 @@ impl Tool for GetRsi {
                         "timespan".to_string(),
                         json!({
                             "type": "string",
-                            "description": "Aggregate timespan: minute, hour, day, week, month, quarter, year",
-                            "enum": ["minute", "hour", "day", "week", "month", "quarter", "year"],
+                            "description": "Aggregate timespan: second, minute, hour, day, week, month, quarter, year",
+                            "enum": ["second", "minute", "hour", "day", "week", "month", "quarter", "year"],
                             "default": "day"
                         }),
                     ),
@@ -634,8 +634,8 @@ impl Tool for GetMacd {
                         "timespan".to_string(),
                         json!({
                             "type": "string",
-                            "description": "Aggregate timespan: minute, hour, day, week, month, quarter, year",
-                            "enum": ["minute", "hour", "day", "week", "month", "quarter", "year"],
+                            "description": "Aggregate timespan: second, minute, hour, day, week, month, quarter, year",
+                            "enum": ["second", "minute", "hour", "day", "week", "month", "quarter", "year"],
                             "default": "day"
                         }),
                     ),

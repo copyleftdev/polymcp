@@ -127,8 +127,8 @@ impl Tool for GetCryptoAggregates {
                         "timespan".to_string(),
                         json!({
                             "type": "string",
-                            "description": "Time window: minute, hour, day, week, month",
-                            "enum": ["minute", "hour", "day", "week", "month"],
+                            "description": "Time window: second, minute, hour, day, week, month, quarter, year",
+                            "enum": ["second", "minute", "hour", "day", "week", "month", "quarter", "year"],
                             "default": "day"
                         }),
                     ),
